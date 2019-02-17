@@ -45,9 +45,12 @@ new Vue({
                 inStock: 81
             }
         ],
+        
         cart: {
             items: []
-        }
+        },
+
+        isShowingCart: false
     },
 
     filters: {
