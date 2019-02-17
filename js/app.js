@@ -1,8 +1,7 @@
 new Vue({
     el: '#app',
     data: {
-        products: [
-            {
+        products: [{
                 id: 1,
                 name: 'MacBook Pro (15 inch)',
                 description: 'This laptop has a super crisp Retina display. Yes, we know that it\'s overpriced...',
@@ -45,7 +44,7 @@ new Vue({
                 inStock: 81
             }
         ],
-        
+
         cart: {
             items: []
         },
@@ -54,7 +53,7 @@ new Vue({
     },
 
     filters: {
-        currency: function(value) {
+        currency: function (value) {
             var formatter = Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
@@ -66,41 +65,63 @@ new Vue({
     },
 
     methods: {
-        addToCart: function(product) {
+        addToCart: function (product) {
             var cartItem = this.getCartItem(product);
-            if(cartItem!= null) {
-                cartItem.quantity++;
+            if (cartItem != null) {
+                cartItem.qty++;
             } else {
                 this.cart.items.push({
-                    product: product,
-                    quantity: 1
+                    prod: product,
+                    qty: 1
                 });
             }
 
             product.inStock--;
         },
 
-        getCartItem: function(product) {
-            for (let i = 0; i < this.cart.items.length; i++) {
-                if(this.cart.items[i].product.id == product.id) {
+        getCartItem: function (product) {
+            for (var i = 0; i < this.cart.items.length; i++) {
+                if (this.cart.items[i].prod.id == product.id) {
                     return this.cart.items[i];
                 }
             }
 
             return null;
+        },
+
+        increaseQty: function (cartItem) {
+            cartItem.prod.inStock--;
+            cartItem.qty++;
+        },
+
+        decreaseQty: function (cartItem) {
+            cartItem.qty--;
+            cartItem.prod.inStock++;
+
+            if(cartItem.qty == 0) {
+                this.removeItemFromCart(cartItem)
+            }
+        },
+
+        removeItemFromCart: function(cartItem) {
+            var index = this.cart.items.indexOf(cartItem);
+
+            if(index !== -1) {
+                this.cart.items.splice(index, 1);
+            }
         }
     },
 
     computed: {
-        cartTotal: function() {
+        cartTotal: function () {
             var total = 0;
-            this.cart.items.forEach(function(item) {
-                total += item.quantity * item.product.price;
+            this.cart.items.forEach(function (item) {
+                total += item.qty * item.prod.price;
             });
 
             return total;
         },
-        taxAmount: function() {
+        taxAmount: function () {
             return ((this.cartTotal * 10) / 100);
         }
     },
